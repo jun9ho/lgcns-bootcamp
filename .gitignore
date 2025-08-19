@@ -1,0 +1,15 @@
+### Java ###
+*.jar
+
+### IDE / Editor ###
+.idea/
+*.iml
+.vscode/
+
+### Gradle ###
+.gradle/
+build/
+out/
+
+### bin folder ###
+bin/
