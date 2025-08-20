@@ -3,6 +3,7 @@ package practice.post.front;
 import java.util.List;
 import java.util.Optional;
 
+import practice.post.ctrl.PostSaveCtrl;
 import practice.post.ctrl.PostDeleteCtrl;
 import practice.post.ctrl.PostFindCtrl;
 import practice.post.ctrl.PostInsertCtrl;
@@ -65,5 +66,11 @@ public class FrontController {
 
         PostSearchCtrl obj = (PostSearchCtrl) factory.getCtrl(requestURL);
         return obj.search(writer);
+    }
+
+    public boolean save(String requestURL){
+
+        PostSaveCtrl obj = (PostSaveCtrl) factory.getCtrl(requestURL);
+        return obj.save();
     }
 }

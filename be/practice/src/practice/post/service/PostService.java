@@ -1,6 +1,7 @@
 package practice.post.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import practice.post.domain.dto.PostRequestDTO;
@@ -16,4 +17,10 @@ public interface PostService {
 
     public Optional<List<PostResponseDTO>> searchService(String writer);
 
+    public int deleteService(Map<String,Integer> map);
+
+    public int updateService(PostRequestDTO request);
+
+    public List<PostResponseDTO> loadToFile();
+    public boolean saveToFile();
 }

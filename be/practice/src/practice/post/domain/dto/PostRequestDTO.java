@@ -1,5 +1,7 @@
 package practice.post.domain.dto;
 
+import java.io.Serializable;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -7,7 +9,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @ToString
-public class PostRequestDTO {
+public class PostRequestDTO implements Serializable {
 
     private int id;
     private String title, content, writer;

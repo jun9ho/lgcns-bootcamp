@@ -52,8 +52,15 @@ public class PostView {
                     search();
                     break;
                 case 99:
+                    boolean flag = front.save("save");
+                    if(flag){
+                        System.out.println("저장 완료");
+                        System.exit(0);
+                    }
+                    else{
+                        System.out.println("저장 실패");
+                    }
                     System.out.println("포스트 앱 수행을 종료합니다");
-                    System.exit(0);
                     break;
                 default:
                     System.out.println("잘못된 입력입니다. 다시 시도해주세요.");

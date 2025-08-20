@@ -63,8 +63,13 @@ public class PostView {
                     break ;
 
                 case 99 : 
-                    System.out.println("포스트 앱 수행을 종료합니다");
-                    System.exit(0) ; 
+                    boolean flag = front.save("save");
+                    if(flag) {
+                        System.out.println("데이터 저장 후포스트 앱 수행을 종료합니다");
+                        System.exit(0) ; 
+                    } else {
+                        System.out.println("데이터 저장 실패!!"); 
+                    }
                     break ;
                 default : 
                     System.out.println("선택하신 번호는 작업 수행이 불가합니다."); 
@@ -81,10 +86,11 @@ public class PostView {
         System.out.println(">>>> 데이터 출력 <<<<");
 
         List<PostResponseDTO> list = front.list("list") ;
-        System.out.println(">>>> view list data : "+ list ); 
+        // System.out.println(">>>> view list data : "+ list ); 
         
         // 1.8 version 
         // stream api 이용해서 출력 
+        System.out.println();
         list.stream()
             .forEach( System.out::println ) ;
 

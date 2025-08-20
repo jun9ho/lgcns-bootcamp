@@ -1,6 +1,8 @@
 package practice.post.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import practice.post.domain.dto.PostResponseDTO;
 import practice.post.service.PostService;
@@ -18,9 +20,11 @@ public class PostDeleteCtrl {
 
     public int delete(int id) {
 
-        List<PostResponseDTO> list = service.selectService();
-        list.removeIf(post -> post.getId() == id);
-        return 1;
+        System.out.println(">>>> post delete ctrl delete params : " + id);
+        Map<String,Integer>map = new HashMap<>();
+        map.put("key", id);
+
+        return service.deleteService(map);
     }
 
 }

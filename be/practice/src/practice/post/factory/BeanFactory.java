@@ -3,6 +3,7 @@ package practice.post.factory;
 import java.util.HashMap;
 import java.util.Map;
 
+import practice.post.ctrl.PostSaveCtrl;
 import practice.post.ctrl.PostDeleteCtrl;
 import practice.post.ctrl.PostFindCtrl;
 import practice.post.ctrl.PostInsertCtrl;
@@ -21,31 +22,31 @@ Singleton Pattern
 
 */
 public class BeanFactory {
- 
-    
-    private static BeanFactory instance;
-    private Map<String,Object> map;
-    private PostService service ;
 
-    private BeanFactory(){
-        service = new PostServiceImpl(); 
+    private static BeanFactory instance;
+    private Map<String, Object> map;
+    private PostService service;
+
+    private BeanFactory() {
+        service = new PostServiceImpl();
         map = new HashMap<>();
-        map.put("list"   , new PostListCtrl(service)   ) ; 
-        map.put("find"   , new PostFindCtrl(service)   ) ;
-        map.put("insert" , new PostInsertCtrl(service) ) ;
-        map.put("delete" , new PostDeleteCtrl(service) ) ;
-        map.put("update" , new PostUpdateCtrl(service) ) ;
-        map.put("search" , new PostSearchCtrl(service) ) ;  
+        map.put("list", new PostListCtrl(service));
+        map.put("find", new PostFindCtrl(service));
+        map.put("insert", new PostInsertCtrl(service));
+        map.put("delete", new PostDeleteCtrl(service));
+        map.put("update", new PostUpdateCtrl(service));
+        map.put("search", new PostSearchCtrl(service));
+        map.put("save", new PostSaveCtrl(service));
     }
 
-    public static BeanFactory getInstance(){
-        if(instance == null){
+    public static BeanFactory getInstance() {
+        if (instance == null) {
             instance = new BeanFactory();
         }
         return instance;
     }
 
-    public Object getCtrl(String requestURL){
+    public Object getCtrl(String requestURL) {
         return map.get(requestURL);
     }
 

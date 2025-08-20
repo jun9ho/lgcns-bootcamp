@@ -2,6 +2,7 @@ package practice.post.ctrl;
 
 import java.util.Optional;
 
+import practice.post.domain.dto.PostRequestDTO;
 import practice.post.domain.dto.PostResponseDTO;
 import practice.post.service.PostService;
 
@@ -16,10 +17,16 @@ public class PostUpdateCtrl {
     }
 
     public int update(String title, String content, int id){
-        
-        Optional<PostResponseDTO> result = service.selectService(id);
-        
-        return 1;
+
+        System.out.println(">>>> post update : params title " + title + ", content " + content + ", id " + id);
+
+                PostRequestDTO request = PostRequestDTO.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .build();
+
+        return service.updateService(request);
 
     }
 }
