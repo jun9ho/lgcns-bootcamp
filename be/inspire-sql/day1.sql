@@ -14,7 +14,7 @@ select: 데이터를 검색할 때 사용하는 문법
 
 select 	column_name, *, as , distinct
 from		table_name
-[where]		 행의 제한
+[where]		   행의 제한
 [group by]		데이터를 그룹으로 묶을 떄
 [having]			그룹에 대한 조건
 [order by]		정렬(내림차순 DESC, 오름차순 ASC)
@@ -58,7 +58,7 @@ SELECT CONCAT(EMP_NAME, '님의 급여는', SALARY,'원 입니다') AS '급여�
 FROM employee
 
 
--- 급여정ㅂ가 3500000 ~ 5500000 
+-- 급여정보가 3500000 ~ 5500000 
 
 SELECT * FROM employee WHERE SALARY>= 3500000 AND SALARY<=5500000 ;
 SELECT * FROM employee WHERE SALARY BETWEEN 3500000 AND 5500000 ;
@@ -92,10 +92,6 @@ SELECT * FROM employee WHERE DEPT_ID = '60' OR DEPT_ID ='90';
 
 SELECT * FROM employee WHERE DEPT_ID IN(60,90);
 
-usertblinspireinspireinspire
-
 
 SELECT EMP_ID  AS '아이디',EMP_NAME  AS '아이디' FROM employee;
 
-
-mysqlmysql
