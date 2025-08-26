@@ -1,0 +1,389 @@
+-- Q8
+SELECT 	C.CLASS_NAME
+			,P.PROFESSOR_NAME
+FROM 		TB_CLASS C
+JOIN 		TB_CLASS_PROFESSOR CP ON (C.CLASS_NO = CP.CLASS_NO)
+JOIN 		TB_PROFESSOR P ON (CP.PROFESSOR_NO = P.PROFESSOR_NO);
+
+
+-- Q9
+SELECT 	C.CLASS_NAME,
+			P.PROFESSOR_NAME
+FROM 		tb_class C
+JOIN 		tb_class_professor CP ON (C.CLASS_NO = CP.CLASS_NO)
+JOIN 		tb_professor P ON (P.PROFESSOR_NO = CP.PROFESSOR_NO)
+JOIN 		tb_department D ON (D.DEPARTMENT_NO = P.DEPARTMENT_NO)
+WHERE 	D.CATEGORY = '인문사회';
+
+-- Q13
+SELECT	C.CLASS_NAME
+			,D.DEPARTMENT_NAME
+FROM				tb_class       		C
+LEFT JOIN		tb_department  		D 	ON (C.DEPARTMENT_NO = D.DEPARTMENT_NO) 
+LEFT JOIN		tb_class_professor 	CP	ON (C.CLASS_NO = CP.CLASS_NO)
+WHERE		D.CATEGORY='예체능' AND CP.PROFESSOR_NO IS NULL ;
+
+
+
+-- Q14
+SELECT 	S.STUDENT_NAME AS "학생이름",
+			CASE
+				WHEN P.PROFESSOR_NAME IS NULL THEN '지도교수 미지정'
+				ELSE P.PROFESSOR_NAME
+			END AS "지도교수"
+FROM 			tb_student 		S
+JOIN 			tb_department 	D ON (S.DEPARTMENT_NO = D.DEPARTMENT_NO)
+LEFT JOIN 	tb_professor 	P ON (S.COACH_PROFESSOR_NO = P.PROFESSOR_NO)
+WHERE D.DEPARTMENT_NAME = '서반아어학과'
+ORDER BY S.STUDENT_NO ; 
+
+
+
+-- DAY04 SUBQUERY & DDL(데이터 정의어) 
+-- SUBQUERY : 하나의 쿼리가 다른 쿼리를 포함하는 구조 
+-- 유형 : 단일행(단일열, 다중열), 다중행(단일열, 다중열)
+-- where, having 절(subquery) , select 절(scalar subquery) , from 절(inline view)
+ 
+
+
+SELECT	DEPARTMENT_NO
+FROM		tb_department 
+WHERE		DEPARTMENT_NAME='국어국문학과' ; 
+
+
+SELECT	S.STUDENT_NAME
+FROM		tb_student S  
+WHERE		SUBSTRING(S.STUDENT_SSN, 8, 1) = '2' 
+AND 		S.ABSENCE_YN = 'Y'
+AND 		S.DEPARTMENT_NO = (	SELECT	DEPARTMENT_NO
+										FROM		tb_department 
+										WHERE		DEPARTMENT_NAME='국어국문학과') ; 
+ 
+
+
+SELECT	*
+FROM		employee ;
+
+-- 나승원 사원과 같은 부서원을 검색한다면?
+-- 주어진 조건은 이름만 전달 
+
+SELECT *
+FROM employee
+WHERE DEPT_ID = ( SELECT DEPT_ID FROM employee WHERE EMP_NAME ='나승원');
+
+
+SELECT	DEPT_ID
+FROM		employee E
+WHERE		E.EMP_NAME = '나승원' ; 
+
+SELECT	*
+FROM		employee E 
+WHERE		DEPT_ID = (	SELECT	DEPT_ID
+							FROM		employee E
+							WHERE		E.EMP_NAME = '나승원') ;
+							
+-- 부서별 급여 총합 
+-- 부서별 급여 총합이 가장 높은 부서만 확인하고 싶다면?
+-- maria DB는 집계함수를 중첩할 수 없음
+SELECT D.DEPT_NAME,SUM(SALARY)
+FROM employee E
+JOIN department D ON(E.DEPT_ID=D.DEPT_ID)
+GROUP BY D.DEPT_NAME;
+
+
+SELECT	D.DEPT_ID,
+			SUM(SALARY) AS `TOTAL`
+FROM		employee 	E
+JOIN		department 	D ON(E.DEPT_ID = D.DEPT_ID)
+GROUP BY D.DEPT_ID ; 
+
+SELECT E.DEPT_ID,MAX(TOTAL)
+FROM (SELECT DEPT_ID,SUM(SALARY) AS 'TOTAL'
+FROM employee E
+GROUP BY E.DEPT_ID) V
+JOIN employee E ON (E.DEPT_ID = V.DEPT_ID)
+ 
+ 
+
+EXPLAIN
+SELECT	D.DEPT_ID,
+			SUM(SALARY) AS `TOTAL`
+FROM		employee 	E
+JOIN		department 	D ON(E.DEPT_ID = D.DEPT_ID)
+GROUP BY D.DEPT_ID 
+HAVING	SUM(SALARY) = (	SELECT MAX(TOTAL)
+         						FROM  ( 	SELECT  	DEPT_ID,
+                          							SUM(SALARY) AS `TOTAL`
+                   						FROM   	employee E
+                   						GROUP BY DEPT_ID
+                 					) T
+               			); 
+
+-- LIMIT 절 == TOP - N QUERY 
+-- 사용하기 전 반드시 정렬 
+EXPLAIN
+SELECT	DEPT_ID,
+         SUM(SALARY) AS `TOTAL`	
+FROM		employee E
+GROUP BY E.DEPT_ID
+ORDER BY 2 DESC 
+LIMIT 1 ; 
+
+-- M+1 번지부터 N객 가져오는 느낌 
+SELECT	DEPT_ID,
+         SUM(SALARY) AS `TOTAL`	
+FROM		employee E
+GROUP BY E.DEPT_ID
+ORDER BY 2 DESC 
+LIMIT 2 OFFSET 1; 
+		
+-- 최소급여 확인 
+SELECT	DEPT_ID,
+			MIN(SALARY) 
+FROM		employee 
+GROUP BY DEPT_ID ; 
+
+
+-- 다중열 서브쿼리가 필요한 이유 
+-- 부서별 최소급여를 받는 사원정보를 검색한다면?
+
+SELECT	*
+FROM		employee 
+WHERE		(DEPT_ID, SALARY)  IN (	SELECT	DEPT_ID,
+														MIN(SALARY) 
+											FROM		employee 
+											GROUP BY DEPT_ID) ; 
+											
+
+-- 과장직급의 급여 확인
+SELECT	SALARY
+FROM		employee E 
+JOIN		job		J ON(E.JOB_ID = J.JOB_ID) 
+WHERE		JOB_TITLE = '과장'; 
+
+
+-- 대리직급의 급여 확인 
+SELECT	SALARY
+FROM		employee E 
+JOIN		job		J ON(E.JOB_ID = J.JOB_ID) 
+WHERE		JOB_TITLE = '대리';
+
+-- 다중행 서브쿼리일 경우 사용할 수 있는 연사자(IN, ANY, ALL) 
+/*
+> ANY , < ANY 
+> ALL , < ALL 
+*/
+-- 단일행 서브쿼리는 일반연산자 사용이 가능하다 
+-- 과장직급보다 많은 급여를 받는 대리직급 사원의 정보를 검색한다면?
+
+SELECT	EMP_NAME,
+			SALARY
+FROM		employee E 
+JOIN		job		J ON(E.JOB_ID = J.JOB_ID) 
+WHERE		JOB_TITLE = '대리'
+AND		SALARY < ANY (	SELECT	SALARY
+								FROM		employee E 
+								JOIN		job		J ON(E.JOB_ID = J.JOB_ID) 
+								WHERE		JOB_TITLE = '과장') ; 
+							
+
+
+-- Q15
+SELECT 	S.STUDENT_NO AS `학번`,
+			S.STUDENT_NAME AS `이름`,
+			D.DEPARTMENT_NAME AS `학과 이름`,
+			ROUND(AVG(G.`POINT`),2) AS `평점`
+FROM 		tb_student 		S
+JOIN 		tb_department 	D 		ON (S.DEPARTMENT_NO = D.DEPARTMENT_NO)
+JOIN 		tb_grade 		G 		ON (S.STUDENT_NO = G.STUDENT_NO)
+WHERE 	S.ABSENCE_YN = 'N'
+GROUP BY S.STUDENT_NO, S.STUDENT_NAME, D.DEPARTMENT_NAME
+HAVING 	AVG(G.POINT) >= 4.0
+ORDER BY 1;
+
+SELECT 	V.STUDENT_NO AS `학번`,
+			V.STUDENT_NAME AS `이름`,
+			D.DEPARTMENT_NAME AS `학과 이름`,
+			ROUND(AVG(G.`POINT`),2) AS `평점`
+FROM		(	SELECT 	*
+				FROM		tb_student S
+				WHERE		S.ABSENCE_YN = 'N') V
+JOIN 		tb_department 	D 		ON (V.DEPARTMENT_NO = D.DEPARTMENT_NO)
+JOIN 		tb_grade 		G 		ON (V.STUDENT_NO = G.STUDENT_NO)
+GROUP BY V.STUDENT_NO, V.STUDENT_NAME, D.DEPARTMENT_NAME
+HAVING 	AVG(G.POINT) >= 4.0
+ORDER BY 1;
+
+
+
+-- Q16
+-- FROM 절 서브쿼리로 변경 
+SELECT 		C.CLASS_NO, 
+				C.CLASS_NAME, 
+				AVG(G.POINT) AS "AVG(POINT)"
+FROM 			tb_class C
+JOIN 			tb_grade G 			ON (C.CLASS_NO = G.CLASS_NO)
+JOIN 			tb_department D 	ON (C.DEPARTMENT_NO = D.DEPARTMENT_NO)
+WHERE 		D.DEPARTMENT_NAME = '환경조경학과' 
+AND 			C.CLASS_TYPE LIKE '%전공%'
+GROUP BY 	C.CLASS_NO, C.CLASS_NAME;
+
+
+SELECT 		C.CLASS_NO,
+				C.CLASS_NAME,
+				AVG(G.POINT) AS `AVG(POINT)`
+FROM 			TB_CLASS C
+JOIN 			TB_GRADE G ON (C.CLASS_NO = G.CLASS_NO)
+WHERE 		C.DEPARTMENT_NO = ( 	SELECT 	D.DEPARTMENT_NO
+											FROM 		TB_DEPARTMENT D
+											WHERE 	D.DEPARTMENT_NAME = '환경조경학과'
+											AND 		C.CLASS_TYPE LIKE "전공%")
+GROUP BY C.CLASS_NO, C.CLASS_NAME;
+
+
+
+-- Q17 
+
+SELECT	STUDENT_NAME,
+			STUDENT_ADDRESS
+FROM		tb_student S
+WHERE		DEPARTMENT_NO = (	SELECT 	DEPARTMENT_NO
+									FROM 		tb_student
+									WHERE 	STUDENT_NAME = '최경희') ;
+
+
+-- Q18 : LIMIT , WINDOW FUNCTION(RANK() ) 
+
+SELECT 	S.STUDENT_NO 	AS `STUDENT_NO`,
+			S.STUDENT_NAME AS `STUDENT_NAME`
+FROM		tb_student 		S
+JOIN 		tb_department 	D ON(S.DEPARTMENT_NO = D.DEPARTMENT_NO)
+JOIN 		tb_grade 		G ON(S.STUDENT_NO = G.STUDENT_NO)
+WHERE 	D.DEPARTMENT_NAME = '국어국문학과'
+GROUP BY S.STUDENT_NO, S.STUDENT_NAME
+ORDER BY AVG(G.`POINT`) DESC 
+LIMIT	1 ;
+
+
+
+-- DDL(DATA DEFINITION LANGUAGE) : CREATE, DROP, ALTER 
+-- TABLE (CONSTRAINT) : NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK 
+-- VIEW : 읽기전용(권한, 복잡한 질의어를 단순) 
+/*
+
+CREATE TABLE TABLE_NAME(
+	COLUMN_NAME DATATYPE [DEFAULT EXPR] [COLUMN CONSTRAINT],
+	[TABLE CONSTRAINT]	
+) ;
+
+*/
+
+-- DML(DATA MANIPULATION LANGUAGE) : INSERT, UPDATE, DELETE
+-- SMALLINT BIGINT
+ 
+DROP TABLE IF EXISTS TABLE_NAME ; 
+
+CREATE TABLE DUMMY_TBL(
+	USER_ID		VARCHAR(50) PRIMARY KEY, -- COLUMN LEVEL CONSTRAINT 
+	USER_NAME	VARCHAR(50) NOT NULL,
+	BIRTH_YEAR  DATE 			DEFAULT SYSDATE() ,
+	ADDRESS		VARCHAR(50),
+	MOBILE01		CHAR(3),
+	MOBILE02    CHAR(9),
+	HEIGHT		INT,
+	PRIMARY KEY(컬럼명) -- TABLE LEVEL CONSTRAINT 
+);
+
+
+
+
+DROP TABLE IF EXISTS JOB_TBL ;
+CREATE TABLE JOB_TBL(
+	JOB_ID 		CHAR(3),
+	JOB_TITLE	VARCHAR(100),
+	PRIMARY KEY(JOB_ID) 
+); 
+
+SELECT	*
+FROM		JOB_TBL ;
+
+INSERT INTO JOB_TBL(JOB_ID, JOB_TITLE) VALUES
+('J1', '대표이사'),
+('J2', '부장'),
+('J3', '차장') ;
+ 
+INSERT INTO JOB_TBL(JOB_ID, JOB_TITLE) VALUES('J4', '대리');
+INSERT INTO JOB_TBL(JOB_ID, JOB_TITLE) VALUES('J5', '사원');
+
+-- ERROR(중복, NULL) 
+-- INSERT INTO JOB_TBL(JOB_ID, JOB_TITLE) VALUES('J5', '사원');
+-- INSERT INTO JOB_TBL(JOB_ID, JOB_TITLE) VALUES(NULL, '사원');
+
+SELECT	*
+FROM		job_tbl 
+WHERE		JOB_ID.TRIM() = 'J1' ;
+
+
+
+
+DROP TABLE IF EXISTS DEPT_TBL ;
+CREATE TABLE DEPT_TBL(
+	DEPT_ID 		CHAR(2) PRIMARY KEY,
+	DEPT_NAME	VARCHAR(100) NOT NULL
+); 
+
+SELECT	*
+FROM		DEPT_TBL ;
+
+INSERT INTO dept_tbl(DEPT_ID, DEPT_NAME) VALUES
+('10', '교육팀'),
+('20', '영업팀'),
+('30', '힐링팀'),
+('40', '레크팀') ;
+
+-- ERROR
+INSERT INTO dept_tbl(DEPT_ID, DEPT_NAME) VALUES('50', NULL) ;
+
+
+-- 외래키 옵션 : 참조무결성 관련 옵션  
+-- ON DELETE CASCADE ON DELETE SET NULL , ON UPDATE CASCADE 
+
+DROP TABLE IF EXISTS EMP_TBL ;
+CREATE TABLE EMP_TBL(
+	EMP_ID 		VARCHAR(20) 	PRIMARY KEY,
+	EMP_NAME		VARCHAR(100) 	NOT NULL,
+	SALARY 		INT				CHECK( SALARY > 0 ),
+	GENDER		CHAR(1)			CHECK( GENDER IN ('F', 'M')),
+	JOB_ID		CHAR(3)			NOT NULL, 
+	DEPT_ID		CHAR(2)			NOT NULL,
+	FOREIGN KEY (JOB_ID) 		REFERENCES job_tbl(JOB_ID),
+	FOREIGN KEY (DEPT_ID) 		REFERENCES DEPT_tbl(DEPT_ID)
+); 
+
+SELECT	* 
+FROM	 	emp_tbl ; 
+
+/*
+_ci : 대소문자를 구별 X
+_cs : 대소문자를 구별 O 
+*/
+
+-- ERROR NOT NULL
+INSERT INTO EMP_TBL 
+VALUES('100', '임정섭', 0, 'F', NULL, NULL); 
+ 
+-- ERROR CHECK  
+INSERT INTO EMP_TBL 
+VALUES('100', '임정섭', 0, 'F', 'J1', '10'); 
+
+-- ERROR CHECK 
+INSERT INTO EMP_TBL 
+VALUES('100', '임정섭', 100, '?', 'J1', '10'); 
+
+-- ERROR 
+INSERT INTO EMP_TBL 
+VALUES('200', '임정섭', 100, 'F', 'J6', '50'); 
+
+-- INSERT OK
+INSERT INTO EMP_TBL 
+VALUES('300', '임정섭', 100, 'F', 'J5', '40'); 
