@@ -76,6 +76,25 @@ JOIN tb_class  C ON (D.DEPARTMENT_NO = C.DEPARTMENT_NO)
 	 작성하시오. 
 */
 
+SELECT C.CLASS_NAME,P.PROFESSOR_NAME
+FROM tb_class C
+JOIN tb_class_professor CP ON(C.CLASS_NO=CP.CLASS_NO)
+JOIN tb_professor P ON(CP.PROFESSOR_NO=P.PROFESSOR_NO)
+
+/*
+ 9. 8번의 결과 중 ‘인문사회’ 계열에 속핚 과목의 교수 이름을 찾으려고 한다. 이에 
+	 해당하는 과목 이름과 교수 이름을 출력하는 SQL 문을 작성하시오.
+*/
+
+
+
+
+
+
+
+
+
+
 
 
 

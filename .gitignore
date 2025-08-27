@@ -1,15 +1,70 @@
-### Java ###
-*.jar
+### OS ###
+.DS_Store
+Thumbs.db
 
 ### IDE / Editor ###
 .idea/
 *.iml
 .vscode/
+.project
+.classpath
+.settings/
+.sts4-cache/
+.factorypath
+*.swp
+*.swo
 
 ### Gradle ###
 .gradle/
 build/
-out/
+**/build/
 
-### bin folder ###
+# Wrapper
+!gradlew
+!gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+### Java ###
+*.class
+hs_err_pid*
+replay_pid*
+
+### Logs / Temp ###
+logs/
+*.log
+tmp/
+*.tmp
+
+### Spring Boot / Config ###
+# 로컬 전용 설정/비밀키
+*.local.properties
+*.local.yml
+*.local.yaml
+*.local.env
+.env
+.env.*
+
+# 키/인증서
+*.jks
+*.keystore
+*.p12
+
+### Databases (로컬 개발용 파일 DB) ###
+*.h2.db
+*.mv.db
+*.trace.db
+*.db
+
+### Maven ###
+target/
+.mvn/
+!mvnw
+!mvnw.cmd
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE 빌드 산출물
 bin/
+**/bin/
+out/
+**/out/
