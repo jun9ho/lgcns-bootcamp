@@ -86,20 +86,64 @@ JOIN tb_professor P ON(CP.PROFESSOR_NO=P.PROFESSOR_NO)
 	 해당하는 과목 이름과 교수 이름을 출력하는 SQL 문을 작성하시오.
 */
 
+SELECT C.CLASS_NAME,P.PROFESSOR_NAME
+FROM tb_class C
+JOIN tb_class_professor CP ON(C.CLASS_NO=CP.CLASS_NO)
+JOIN tb_professor P ON(CP.PROFESSOR_NO=P.PROFESSOR_NO)
+JOIN tb_department D ON(C.DEPARTMENT_NO = D.DEPARTMENT_NO)
+WHERE D.CATEGORY = '인문사회'
 
+/*
+ 10. ‘음악학과’ 학생들의 평점을 구하려고 한다. 음악학과 학생들의 "학번", "학생 이름", 
+	  "전체 평점"을 출력하는 SQL 문장을 작성하시오. (단, 평점은 소수점 1자리까지만 
+	  반올림하여 표시한다.) 
+*/
 
+SELECT S.STUDENT_NO AS '학번', S.STUDENT_NAME AS '학생 이름',ROUND(AVG(G.`POINT`),1) AS '전체 평점'
+FROM tb_student S
+JOIN tb_grade G ON (S.STUDENT_NO = G.STUDENT_NO)
+JOIN tb_department D ON(S.DEPARTMENT_NO = D.DEPARTMENT_NO) 
+WHERE D.DEPARTMENT_NAME = '음악학과'
+GROUP BY S.STUDENT_NO
 
+/*
+ 11. 학번이 A313047인 학생이 학교에 나오고 있지 않다. 지도 교수에게 내용을 전달하기 
+	  위한 학과 이름, 학생 이름과 지도 교수 이름이 필요하다. 이때 사용할 SQL 문을 
+	  작성하시오.  단, 출력헤더는 ‚학과이름‛, ‚학생이름‛, ‚지도교수이름‛으로 
+	  출력되도록 한다.
+*/
 
+SELECT D.DEPARTMENT_NAME AS '학과이름',S.STUDENT_NAME AS '학생이름', P.PROFESSOR_NAME AS '지도교수이름'
+FROM tb_student S
+JOIN tb_department D ON (S.DEPARTMENT_NO = D.DEPARTMENT_NO)
+JOIN tb_professor P ON (S.COACH_PROFESSOR_NO = P.PROFESSOR_NO)
+WHERE S.STUDENT_NO = 'A313047'
 
+/*
+ 12. 2007 년도에 '인간관계론' 과목을 수강한 학생을 찾아 학생이름과 수강학기를 표시하는 
+	  SQL 문장을 작성하시오.  
+*/
 
+SELECT S.STUDENT_NAME, G.TERM_NO AS 'TERM_NAME'
+FROM tb_student S
+JOIN tb_grade G ON (S.STUDENT_NO = G.STUDENT_NO)
+JOIN tb_class C ON (G.CLASS_NO = C.CLASS_NO)
+WHERE C.CLASS_NAME = '인간관계론' AND SUBSTRING(G.TERM_NO,1,4)='2007'
 
+/*
+ 13. 예체능 계열 과목 중 과목 담당교수를 한 명도 배정받지 못한 과목을 찾아 그 과목 
+	  이름과 학과 이름을 출력하는 SQL 문장을 작성하시오. 
+*/
 
+SELECT * FROM tb_class;
+SELECT * FROM tb_department;
+SELECT * FROM tb_professor;
 
-
-
-
-
-
-
+SELECT *
+FROM tb_department D
+JOIN tb_class C ON (D.DEPARTMENT_NO = C.DEPARTMENT_NO)
+LEFT JOIN tb_professor P ON (D.DEPARTMENT_NO = P.DEPARTMENT_NO)
+WHERE P.PROFESSOR_NO IS NULL AND D.CATEGORY = '예체능'
+GROUP BY C.CLASS_NO
 
 

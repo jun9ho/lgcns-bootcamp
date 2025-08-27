@@ -1,0 +1,9 @@
+* -text
+
+# 윈도우 배치파일만 CRLF 유지
+*.bat      text eol=crlf
+
+# 바이너리 파일은 변환 금지
+*.png binary
+*.jpg binary
+*.gif binary
