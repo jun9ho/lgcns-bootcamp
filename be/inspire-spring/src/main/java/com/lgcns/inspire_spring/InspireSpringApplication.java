@@ -8,6 +8,7 @@ public class InspireSpringApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(InspireSpringApplication.class, args);
+
 	}
 
 }

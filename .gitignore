@@ -41,6 +41,7 @@ tmp/
 *.local.properties
 *.local.yml
 *.local.yaml
+**/src/main/resources/application.yaml
 *.local.env
 .env
 .env.*
