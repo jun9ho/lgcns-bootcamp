@@ -103,7 +103,14 @@ public class BlogCtrl {
         System.out.println("[debug] >>> blog ctrl path : /register");
         System.out.println("[debug] param dto ="+request);
         
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        int result = service.insert(request);
+        if(result!=0){
+            //return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        }else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @Operation(
@@ -116,9 +123,15 @@ public class BlogCtrl {
                         @PathVariable("id") Integer id) {
         System.out.println("[debug] >>> blog ctrl path GET : /read");
         System.out.println("[debug] param is ="+id);
-        BlogResponseDTO response = BlogResponseDTO.builder().id(id).title("암암").content("흠흠흠").build();
+        //BlogResponseDTO response = BlogResponseDTO.builder().id(id).title("암암").content("흠흠흠").build();
+        BlogResponseDTO response = service.find(id);
+        if(response!=null){
+            return new ResponseEntity<>(response,HttpStatus.OK); //200
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); //404
+        }
 
-        return new ResponseEntity<>(response,HttpStatus.OK);
     }
     
     @PutMapping("update/{id}/")
@@ -129,8 +142,18 @@ public class BlogCtrl {
         System.out.println("[debug] >>> blog ctrl path PUT : /update");
         System.out.println("[debug] param is ="+ id);
         System.out.println("[debug] param dto ="+ request);
+        
+        int result  = service.update(id, request);
+        if(result!=0){
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+
         //return ResponseEntity.status(200) 도 가능
-        return new ResponseEntity<>(HttpStatus.OK);
+        //return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("delete/{id}")
@@ -138,6 +161,22 @@ public class BlogCtrl {
         System.out.println("[debug] >>> blog ctrl path DELETE : /delete");
         System.out.println("[debug] param is ="+ id);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        int result  = service.delete(id);
+        if(result!=0){
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
+    @GetMapping("/search/")
+    public ResponseEntity<List<BlogResponseDTO>> search(@RequestParam("keyword") String keyword) {
+        System.out.println("[debug] >>> blog ctrl path : /search");
+        List<BlogResponseDTO> list  = service.findKeyword(keyword);
+        return new ResponseEntity<List<BlogResponseDTO>>(list,HttpStatus.OK);
+        
+    }
+    
 }
