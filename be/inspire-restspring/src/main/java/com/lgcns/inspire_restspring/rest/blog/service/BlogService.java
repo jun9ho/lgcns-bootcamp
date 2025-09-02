@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.lgcns.inspire_restspring.rest.blog.domain.BlogRequestDTO;
 import com.lgcns.inspire_restspring.rest.blog.domain.BlogResponseDTO;
 import com.lgcns.inspire_restspring.rest.blog.repository.BlogMapper;
+import com.lgcns.inspire_restspring.rest.comment.domain.CommentResponseDTO;
+import com.lgcns.inspire_restspring.rest.comment.repository.CommentMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class BlogService {
     
     private final BlogMapper mapper;
+    private final CommentMapper commentMapper;
 
     public List<BlogResponseDTO> select(){
         System.out.println("[debug] >>> blog service select ");
@@ -29,7 +32,11 @@ public class BlogService {
     
     public BlogResponseDTO find(Integer id){
         System.out.println("[debug] >>> blog service find ");
-        return mapper.findById(id);
+        BlogResponseDTO blog = mapper.findById(id);
+
+        List<CommentResponseDTO> list = commentMapper.selectRow(blog.getId());
+        blog.setComments(list);
+        return blog;
     }
 
     public int update(Integer id, BlogRequestDTO request){
