@@ -12,4 +12,5 @@ import com.lgcns.inspire_restspring.rest.comment.domain.CommentResponseDTO;
 public interface CommentMapper {
     public int insertRow(CommentRequestDTO request);
     public List<CommentResponseDTO> selectRow(Integer blog_id);
+    public int deleteRow(Integer id);    
 }

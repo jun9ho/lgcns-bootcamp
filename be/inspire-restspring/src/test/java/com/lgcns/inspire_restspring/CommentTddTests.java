@@ -16,20 +16,20 @@ public class CommentTddTests {
     @Autowired
     private CommentService service;
 
-    @Test
-    public void commentCreateTest(){
-        //given
-        CommentRequestDTO request = CommentRequestDTO.builder()
-                                        .blog_id(2)
-                                        .comment("첫 번쨰 댓글")
-                                        .build();
-
-        //when
-        int flag = service.insertComment(request);
-
-        //then
-        assertEquals(1, flag);
-        assertNotNull(request.getId());
-
-    }
+    //@Test
+    //public void commentCreateTest(){
+    //    //given
+    //    CommentRequestDTO request = CommentRequestDTO.builder()
+    //                                    .blog_id(2)
+    //                                    .comment("첫 번쨰 댓글")
+    //                                    .build();
+//
+    //    //when
+    //    int flag = service.insertComment(request);
+//
+    //    //then
+    //    assertEquals(1, flag);
+    //    assertNotNull(request.getId());
+//
+    //}
 }

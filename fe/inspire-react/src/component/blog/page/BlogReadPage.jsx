@@ -121,23 +121,45 @@ const BlogReadPage = () => {
     */
     const commentHandler = async (blogId, content) => {
         console.log("[debug] >>> comment post  : " , blogId, content );   
-        await api.post('/comments' , {content, blogId})
+        await api.post('/api/v1/blog/comment/register' , {comment: content, blog_id:blogId})
                 .then( response => {
                     console.log("[debug] >>> response  : " , response.data);
-                    setComments((ary) => {
-                        return [...ary , response.data]
-                    })  
-                    setComment('');
+                    if(response.status ==201){
+                        //getBlog();
+                        const newComment = response.data[response.data.length-1];
+                        setComments((ary) => {
+                            return [...ary , newComment]
+                        })  
+                        setComment('');
+                    }
+
                 })
                 .catch( error => {
                     console.log("[debug] >>> error  : ");  
                 });
     }
-
     
     useEffect(() => {
         getBlog();
     }, [] ); 
+    
+    const commentDelete = async(id) =>{
+        console.log(">>>>>>>>>> comment delete ",id);
+        await api.delete(`/api/v1/blog/comment/delete/${id}`)
+                 .then(response=>{
+                    console.log("[debug] >> response: ", response);
+                    if(response.status==204){
+                        setComments((ary)=>{
+                            return ary.filter((c)=>c.id!==id);
+                        })
+                        setComment('');
+                    }
+                 })
+                 .catch(error=>{
+                    console.log("[debug] >>> delete error : ");
+                 })
+    }
+    
 
     return(
         <Wrapper>
@@ -157,7 +179,8 @@ const BlogReadPage = () => {
                 {/* 댓글 UI 설계 */}
                 <CommentLabel>한 줄 댓글</CommentLabel>
 
-                <BlogCommentList comments={comments || [] } />
+                <BlogCommentList comments={comments || [] }
+                                 commentDeleteHandler={commentDelete}/>
 
                 <TextArea   height={40}
                             value={comment}

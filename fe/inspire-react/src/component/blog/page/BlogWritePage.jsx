@@ -26,7 +26,8 @@ const Container = styled.div`
     }
 `;
 
-const BlogWritePage = () => {
+const 
+BlogWritePage = () => {
 
     /*
     1. title, content 훅을 사용해서 상태관리 해야함
@@ -44,7 +45,7 @@ const BlogWritePage = () => {
         // localhost:4000/blogs
         console.log("[debug] >>> " , title, content);
         const data = { title , content } ; 
-        await api.post('/blogs' , data)
+        await api.post('/api/v1/blog/register' , data)
             .then( response => {
                 // console.log("[debug] >>> post response : " , response ); 
                 moveUrl('/');

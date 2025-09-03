@@ -1,6 +1,7 @@
 
 import styled from "styled-components";
 import BlogCommentListItem from "../item/BlogCommentListItem";
+import Button from "../ui/Button";
 const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -14,14 +15,16 @@ const Wrapper = styled.div`
     }
 `;
 
-const BlogCommentList = ({comments}) => {
+const BlogCommentList = ({comments,commentDeleteHandler}) => {
     return(
         <Wrapper>
             {
                 comments.map((comment, idx) => {
                     return (
                         <BlogCommentListItem    key={comment.id}
-                                                comment={comment} />
+                                                comment={comment}
+                                                onDelete={commentDeleteHandler}>
+                        </BlogCommentListItem>
                     )
                 })
             }
