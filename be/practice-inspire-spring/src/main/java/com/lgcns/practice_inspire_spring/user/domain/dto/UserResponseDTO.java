@@ -1,6 +1,6 @@
-package com.lgcns.inspire_restjpa.user.domain.dto;
+package com.lgcns.practice_inspire_spring.user.domain.dto;
 
-import com.lgcns.inspire_restjpa.user.domain.entity.UserEntity;
+import com.lgcns.practice_inspire_spring.user.domain.entity.UserEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,14 +16,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class UserResponseDTO {
-    private String email, passwd, name;
+    private String email;
+    private String passwd;
+    private String name;
 
-    //token
-    private String accessToken;
-    private String refreshToken;
-    // static factory method pattern
-    //entity -> dto
-    public static UserResponseDTO fromEntity(UserEntity user) {
+    public static UserResponseDTO fromEntity(UserEntity user){
         return UserResponseDTO.builder()
                 .email(user.getEmail())
                 .passwd(user.getPasswd())

@@ -7,6 +7,7 @@ import com.lgcns.inspire_restjpa.user.domain.dto.UserRequestDTO;
 import com.lgcns.inspire_restjpa.user.domain.dto.UserResponseDTO;
 import com.lgcns.inspire_restjpa.user.domain.entity.UserEntity;
 import com.lgcns.inspire_restjpa.user.repository.UserRepository;
+import com.lgcns.inspire_restjpa.util.JwtProvider;
 
 @Service
 public class UserService {
@@ -14,6 +15,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtProvider provider;
     public UserResponseDTO signup(UserRequestDTO request){
         System.out.println(">>> service singup");
         UserEntity entity = userRepository.save(request.toEntity());
@@ -25,6 +28,15 @@ public class UserService {
     public UserResponseDTO signin(UserRequestDTO request){
         System.out.println(">>> service singin");
         UserEntity entity = userRepository.findByEmailAndPasswd(request.getEmail(), request.getPasswd());
-        return  UserResponseDTO.fromEntity(entity);
+        String accToken = provider.generateAccessToken(request.getEmail());
+        String refToken = provider.generateRefreshToken(request.getEmail());
+    
+        //이 부분 수정해보기
+        UserResponseDTO response = UserResponseDTO.fromEntity(entity);
+        response.setAccessToken(accToken);
+        response.setRefreshToken(refToken);
+
+        return response;
+                                        
     }
 }

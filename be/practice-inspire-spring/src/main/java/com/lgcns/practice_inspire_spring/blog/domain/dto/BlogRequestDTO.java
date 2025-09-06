@@ -1,4 +1,4 @@
-package com.lgcns.practice_inspire_spring.rest.blog.domain;
+package com.lgcns.practice_inspire_spring.blog.domain.dto;
 
 public class BlogRequestDTO {
     
