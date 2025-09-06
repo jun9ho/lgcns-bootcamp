@@ -97,7 +97,7 @@ const SignUpPage = () => {
       email, passwd, name
     }).then((res) => {
       if(res.status === 204){
-        moveUrl("/");
+        moveUrl("/login");
       }
     }).catch((err) => {
       console.error("회원가입 오류:", err);
