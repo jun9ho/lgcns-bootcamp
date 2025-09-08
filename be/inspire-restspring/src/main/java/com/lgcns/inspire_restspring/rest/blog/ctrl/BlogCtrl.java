@@ -135,7 +135,7 @@ public class BlogCtrl {
     }
     
     @PutMapping("update/{id}/")
-    public ResponseEntity<Void> putMethodName(
+    public ResponseEntity<Void> update(
         @PathVariable("id") Integer id,
         @org.springframework.web.bind.annotation.RequestBody BlogRequestDTO request) {
         

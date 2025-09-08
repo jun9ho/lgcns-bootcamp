@@ -23,7 +23,7 @@ public class UserResponseDTO {
     private String passwd;
     @Schema(description = "유저 이름", example = "고길동")
     private String name;
-
+    
     public static UserResponseDTO fromEntity(UserEntity user){
         return UserResponseDTO.builder()
                 .email(user.getEmail())
